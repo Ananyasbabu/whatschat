@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Form
-from services.ai_service import process_message, send_whatsapp_message # Import the sender
+from services.ai_service import process_message, send_whatsapp_message
 
 router = APIRouter()
 
@@ -8,22 +8,33 @@ async def webhook(
     From: str = Form(...), 
     Body: str = Form(...)
 ):
+    """
+    Handles incoming WhatsApp/Instagram messages from Twilio.
+    """
     try:
-        sender_number = From.replace("whatsapp:", "")
+        # 1. Clean the sender number (Important for the session key)
+        # Twilio sends 'whatsapp:+123456789' or 'messenger:12345'
+        sender_id = From.replace("whatsapp:", "").replace("messenger:", "")
         message_body = Body
 
-        # 1. Generate the reply text using Groq/Logic
-        reply = process_message(sender_number, message_body)
+        # 2. Get the response from AI service
+        # result = {"text": "...", "image": "..."}
+        result = process_message(sender_id, message_body)
 
-        # 2. ACTUALLY SEND THE MESSAGE TO WHATSAPP
-        send_whatsapp_message(sender_number, reply)
+        # 3. Send the message back
+        send_whatsapp_message(
+            to=sender_id, 
+            text=result.get('text', "Sorry, I encountered an error. yarr"), 
+            image_url=result.get('image')
+        )
 
-        # Log to console
-        print(f"Incoming from {sender_number}: {message_body}")
-        print(f"Reply sent to WhatsApp: {reply}")
+        # 4. Debugging (Helps you see if 'Buy' is working during the demo)
+        print(f"📩 Incoming from {sender_id}: {message_body}")
+        if message_body.lower() == "buy":
+            print(f"💰 BUY TRIGGERED for {sender_id}")
 
         return {"status": "success"}
 
     except Exception as e:
-        print(f"Webhook Error: {e}")
-        return {"error": str(e)}
+        print(f"❌ Webhook Error: {e}")
+        return {"status": "error", "message": str(e)}

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "J-101",
+    "name": "Gold Temple Necklace",
+    "price": "₹45,000",
+    "description": "Authentic 22k gold handcrafted necklace.",
+    "image_url": "https://i.postimg.cc/6qJXW132/Screenshot-2026-04-10-152255.png"
+  },
+  {
+    "id": "J-102",
+    "name": "Diamond Studs",
+    "price": "₹25,000",
+    "description": "Premium VVS diamonds.",
+    "image_url": "https://i.postimg.cc/6qJXW132/Screenshot-2026-04-10-152255.png"
+  }
+]
