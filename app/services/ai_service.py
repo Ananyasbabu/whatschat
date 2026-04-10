@@ -159,9 +159,9 @@ def process_message(sender, user_input):
             return {"text": "Oops! Which item would you like to buy? Please mention the ID (e.g., J-101).", "image": None}
 
     # --- 2. PRODUCT DETECTION LOGIC ---
-    match = re.search(r'j-\d+', user_input)
+    match = re.search(r'[a-f0-9]{24}', user_input)
     if match:
-        product_id = match.group().upper()
+        product_id = match.group()
         product = get_product_by_id(product_id)
         
         if product:
@@ -191,7 +191,7 @@ def process_message(sender, user_input):
     
     system_prompt = f"""
     You are Ada, a witty Gen-Z jewelry expert. 
-    If a user wants to buy something, tell them to type the Product ID (e.g. J-101).
+    If a user wants to buy something or see details, tell them to reply with the EXACT Product ID.
     Inventory: {inventory_str}
     """
 
